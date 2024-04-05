@@ -1,4 +1,4 @@
-#English Discription
+# English Discription
 ## Memory Game
 
 Welcome to "Memory Game" - an engaging Python project developed with the Kivy library. This memory-enhancing game offers players a captivating journey into the world of bright colors and logical puzzles.
