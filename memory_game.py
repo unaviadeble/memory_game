@@ -19,7 +19,7 @@ class MemoryGame(BoxLayout):
         self.sequence_label = Label(text="Запомните последовательность", font_size=20)
         self.add_widget(self.sequence_label)
 
-        self.start_button = Button(text="Начать игру", background_color=(0.5, 0.5, 0.5, 1), on_press=self.show_color_sequence)
+        self.start_button = Button(text="Начать игру", background_color=(0.5, 0.5, 0.5, 1), on_press=self.show_color_sequence_v2)
         self.add_widget(self.start_button)
 
         self.color_menu = BoxLayout(orientation='horizontal')
@@ -29,11 +29,24 @@ class MemoryGame(BoxLayout):
             self.color_menu.add_widget(color_button)
         self.play_again_button = Button(text="Играть снова", on_press=self.play_again)
         self.exit_button = Button(text="Выход из игры", on_press=self.exit_game)
+        self.difficult = Button(text="Выбрать сложность", on_press=self.coise_difficult)
+        self.easy = Button(text="Легкая", on_pressed=self.easy_dif)
+        self.mid = Button(text="Средняя", on_pressed=self.mid_dif)
+        self.hard = Button(text="Сложно", on_pressed=self.hard_dif)
 
+    def show_color_sequence_v2(self, instance):
+        self.clear_widgets()
+        self.add_widget(self.difficult)
 
+    def hard_dif(self, hard):
+        self.clear_widgets()
+    def mid_dif(self, mid):
+        self.clear_widgets()
+    def easy_dif(self, easy):
+        self.clear_widgets()
+        
     def show_color_sequence(self, instance):
-        self.remove_widget(self.start_button)  # Remove the start button
-        self.remove_widget(self.intro_label)  # Remove the welcome label
+        self.clear_widgets()
         self.create_sequence()
         self.display_sequence()
         Clock.schedule_once(self.show_color_menu, len(self.correct_sequence) * 1.5)  # Show color menu after sequence display duration
@@ -99,7 +112,11 @@ class MemoryGame(BoxLayout):
             'коричневый': (0.6, 0.3, 0, 1)
         }
         return color_map.get(color, (1, 1, 1, 1))  # Default color to white
-
+    def coise_difficult(self, difficult):
+        self.clear_widgets()
+        self.add_widget(self.easy)
+        self.add_widget(self.mid)
+        self.add_widget(self.hard)
 class ColoredButton(Button):
     def __init__(self, **kwargs):
         super(ColoredButton, self).__init__(**kwargs)
