@@ -1,3 +1,6 @@
+Конечно, вот ваш код с дополнительными комментариями для лучшего понимания каждой части:
+
+```python
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -8,11 +11,12 @@ import random
 class MemoryGame(BoxLayout):
     def __init__(self, **kwargs):
         super(MemoryGame, self).__init__(**kwargs)
-        self.orientation = "vertical"
-        self.colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой', 'коричневый']
-        self.correct_sequence = []
-        self.user_sequence = []
+        self.orientation = "vertical"  # Установка ориентации контейнера
+        self.colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой', 'коричневый']  # Доступные цвета
+        self.correct_sequence = []  # Список для хранения правильной последовательности цветов
+        self.user_sequence = []  # Список для хранения введенной пользователем последовательности цветов
 
+        # Добавление виджетов на экран
         self.intro_label = Label(text="Добро пожаловать в игру 'Memory Game'", font_size=30)
         self.add_widget(self.intro_label)
 
@@ -21,7 +25,7 @@ class MemoryGame(BoxLayout):
         self.start_button = Button(text="Начать игру", background_color=(0.5, 0.5, 0.5, 1), on_press=self.show_color_sequence_v2)
         self.add_widget(self.start_button)
 
-        self.color_menu = BoxLayout(orientation='horizontal')
+        self.color_menu = BoxLayout(orientation='horizontal')  # Меню цветов
         for color in self.colors:
             color_button = Button(text=color, background_color=self.get_color_rgb(color),
                                   on_press=self.add_color_to_sequence)
@@ -42,41 +46,41 @@ class MemoryGame(BoxLayout):
     def hard_dif(self, instance):
         self.clear_widgets()
         self.add_widget(self.sequence_label)
-        self.create_hard_sequence()
-        self.display_sequence()
+        self.create_hard_sequence()  # Создание последовательности для сложной сложности
+        self.display_sequence()  # Отображение последовательности
         Clock.schedule_once(self.show_color_menu, len(self.correct_sequence) * 1.5)
 
     def mid_dif(self, instance):
         self.clear_widgets()
         self.add_widget(self.sequence_label)
-        self.create_mid_sequence()
-        self.display_sequence()
+        self.create_mid_sequence()  # Создание последовательности для средней сложности
+        self.display_sequence()  # Отображение последовательности
         Clock.schedule_once(self.show_color_menu, len(self.correct_sequence) * 1.5)
     def easy_dif(self, instance):
         self.clear_widgets()
         self.add_widget(self.sequence_label)
-        self.create_easy_sequence()
-        self.display_sequence()
+        self.create_easy_sequence()  # Создание последовательности для легкой сложности
+        self.display_sequence()  # Отображение последовательности
         Clock.schedule_once(self.show_color_menu, len(self.correct_sequence) * 1.5)
 
     def show_color_sequence(self, instance):
         self.clear_widgets()
-        self.create_sequence()
-        self.display_sequence()
+        self.create_sequence()  # Создание случайной последовательности цветов
+        self.display_sequence()  # Отображение последовательности
         Clock.schedule_once(self.show_color_menu, len(self.correct_sequence) * 1.5)  # Show color menu after sequence display duration
 
     def create_easy_sequence(self):
-        for _ in range(4):
+        for _ in range(4):  # Создание последовательности из 4 цветов для легкой сложности
             color = random.choice(self.colors)
             self.correct_sequence.append(color)
 
     def create_mid_sequence(self):
-        for _ in range(6):
+        for _ in range(6):  # Создание последовательности из 6 цветов для средней сложности
             color = random.choice(self.colors)
             self.correct_sequence.append(color)
 
     def create_hard_sequence(self):
-        for _ in range(8):
+        for _ in range(8):  # Создание последовательности из 8 цветов для сложной сложности
             color = random.choice(self.colors)
             self.correct_sequence.append(color)
     def display_sequence(self):
@@ -85,8 +89,10 @@ class MemoryGame(BoxLayout):
             self.add_widget(button)
 
     def show_color_menu(self, dt):
+        # Удалить все дочерние виджеты текущего меню
         self.clear_widgets()
 
+        # Добавить новый заголовок для нового меню
         self.new_sequence_label = Label(text="Наберите комбинацию", font_size=20)
         self.add_widget(self.new_sequence_label)
         self.add_widget(self.color_menu)
