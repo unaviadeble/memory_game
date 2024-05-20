@@ -85,10 +85,8 @@ class MemoryGame(BoxLayout):
             self.add_widget(button)
 
     def show_color_menu(self, dt):
-        # Удалить все дочерние виджеты текущего меню
         self.clear_widgets()
 
-        # Добавить новый заголовок для нового меню
         self.new_sequence_label = Label(text="Наберите комбинацию", font_size=20)
         self.add_widget(self.new_sequence_label)
         self.add_widget(self.color_menu)
