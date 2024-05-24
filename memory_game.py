@@ -1,6 +1,3 @@
-Конечно, вот ваш код с дополнительными комментариями для лучшего понимания каждой части:
-
-```python
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
