@@ -1,3 +1,5 @@
+
+import pandas as pd
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -5,33 +7,103 @@ from kivy.uix.label import Label
 from kivy.clock import Clock
 import random
 
+english_colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'brown']
+russian_colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой', 'коричневый']
+
+class LanguageButton(Button):
+    def __init__(self, language, **kwargs):
+        super(LanguageButton, self).__init__(**kwargs)
+        self.language = language
+        self.text = language
+
 class MemoryGame(BoxLayout):
     def __init__(self, **kwargs):
         super(MemoryGame, self).__init__(**kwargs)
-        self.orientation = "vertical"  # Установка ориентации контейнера
-        self.colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой', 'коричневый']  # Доступные цвета
-        self.correct_sequence = []  # Список для хранения правильной последовательности цветов
-        self.user_sequence = []  # Список для хранения введенной пользователем последовательности цветов
+        self.orientation = "vertical"
+        self.colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой', 'коричневый']
+        self.correct_sequence = []
+        self.user_sequence = []
+        self.language = 'English'
+        self.init_ui()
 
-        # Добавление виджетов на экран
-        self.intro_label = Label(text="Добро пожаловать в игру 'Memory Game'", font_size=30)
+    def save_results(self, result):
+        results_df = pd.DataFrame({
+            'Result': [result]
+        })
+        results_df.to_csv('results.csv', mode='a', header=not pd.path.exists('results.csv'), index=False)
+
+    def init_ui(self):
+        self.clear_widgets()
+        self.intro_label = Label(text=self.get_text('intro'), font_size=30)
         self.add_widget(self.intro_label)
 
-        self.sequence_label = Label(text="Запомните последовательность", font_size=20)
-        self.dif_label = Label(text="Выберите сложность", font_size=20)
-        self.start_button = Button(text="Начать игру", background_color=(0.5, 0.5, 0.5, 1), on_press=self.show_color_sequence_v2)
+        self.sequence_label = Label(text=self.get_text('sequence'), font_size=20)
+        self.dif_label = Label(text=self.get_text('difficulty'), font_size=20)
+        self.start_button = Button(text=self.get_text('start'), background_color=(0.5, 0.5, 0.5, 1),
+                                   on_press=self.show_color_sequence_v2)
         self.add_widget(self.start_button)
 
-        self.color_menu = BoxLayout(orientation='horizontal')  # Меню цветов
+        if self.language == 'English':
+            self.colors = english_colors
+        elif self.language == 'Русский':
+            self.colors = russian_colors
+
+        self.color_menu = BoxLayout(orientation='horizontal')
         for color in self.colors:
             color_button = Button(text=color, background_color=self.get_color_rgb(color),
                                   on_press=self.add_color_to_sequence)
             self.color_menu.add_widget(color_button)
-        self.play_again_button = Button(text="Играть снова", on_press=self.play_again)
-        self.exit_button = Button(text="Выход из игры", on_press=self.exit_game)
-        self.easy = Button(text="Легкая", background_color=(0, 1, 0), on_press=self.easy_dif)
-        self.mid = Button(text="Средняя", background_color=(1, 1, 0), on_press=self.mid_dif)
-        self.hard = Button(text="Сложная", background_color=(1, 0, 0), on_press=self.hard_dif)
+        self.play_again_button = Button(text=self.get_text('play_again'), on_press=self.play_again)
+        self.exit_button = Button(text=self.get_text('exit'), on_press=self.exit_game)
+        self.easy = Button(text=self.get_text('easy'), background_color=(0, 1, 0), on_press=self.easy_dif)
+        self.mid = Button(text=self.get_text('mid'), background_color=(1, 1, 0), on_press=self.mid_dif)
+        self.hard = Button(text=self.get_text('hard'), background_color=(1, 0, 0), on_press=self.hard_dif)
+
+        self.language_label = Label(text=self.get_text('language'), font_size=20)
+        self.add_widget(self.language_label)
+
+        self.language_menu = BoxLayout(orientation='horizontal')
+        self.english_button = LanguageButton(language='English', on_press=self.set_language)
+        self.russian_button = LanguageButton(language='Русский', on_press=self.set_language)
+        self.language_menu.add_widget(self.english_button)
+        self.language_menu.add_widget(self.russian_button)
+        self.add_widget(self.language_menu)
+
+    def get_text(self, key):
+        english_texts = {
+            'intro': 'Welcome to the Memory Game',
+            'sequence': 'Remember the sequence',
+            'difficulty': 'Choose difficulty',
+            'start': 'Start Game',
+            'play_again': 'Play Again',
+            'exit': 'Exit Game',
+            'easy': 'Easy',
+            'mid': 'Medium',
+            'hard': 'Hard',
+            'language': 'Choose Language'
+        }
+        russian_texts = {
+            'intro': 'Добро пожаловать в игру "Memory Game"',
+            'sequence': 'Запомните последовательность',
+            'difficulty': 'Выберите сложность',
+            'start': 'Начать игру',
+            'play_again': 'Играть снова',
+            'exit': 'Выход из игры',
+            'easy': 'Легкая',
+            'mid': 'Средняя',
+            'hard': 'Сложная',
+            'language': 'Выберите язык'
+        }
+        if self.language == 'English':
+            return english_texts.get(key, '')
+        elif self.language == 'Русский':
+            return russian_texts.get(key, '')
+        else:
+            return ''
+
+    def set_language(self, instance):
+        self.language = instance.language
+        self.init_ui()
 
     def show_color_sequence_v2(self, instance):
         self.clear_widgets()
@@ -53,6 +125,7 @@ class MemoryGame(BoxLayout):
         self.create_mid_sequence()  # Создание последовательности для средней сложности
         self.display_sequence()  # Отображение последовательности
         Clock.schedule_once(self.show_color_menu, len(self.correct_sequence) * 1.5)
+
     def easy_dif(self, instance):
         self.clear_widgets()
         self.add_widget(self.sequence_label)
@@ -85,6 +158,16 @@ class MemoryGame(BoxLayout):
             button = ColoredButton(text=color, background_color=self.get_color_rgb(color))
             self.add_widget(button)
 
+    def display_result(self, result):
+        self.remove_widget(self.new_sequence_label)
+        self.remove_widget(self.color_menu)
+        result_label = Label(text=result, font_size=20)
+        self.add_widget(result_label)
+        menu_layout = BoxLayout(orientation='vertical')
+        menu_layout.add_widget(self.play_again_button)
+        menu_layout.add_widget(self.exit_button)
+        self.add_widget(menu_layout)
+        self.save_results(result)  # Вызов функции для сохранения результата
     def show_color_menu(self, dt):
         # Удалить все дочерние виджеты текущего меню
         self.clear_widgets()
@@ -116,6 +199,29 @@ class MemoryGame(BoxLayout):
         menu_layout.add_widget(self.exit_button)
         self.add_widget(menu_layout)
 
+    def get_color_rgb(self, color):
+            color_map = {
+                'красный': (1, 0, 0),
+                'синий': (0, 0, 1),
+                'зеленый': (0, 1, 0),
+                'желтый': (1, 1, 0),
+                'фиолетовый': (0.73, 0, 1),
+                'оранжевый': (1, 0.53, 0),
+                'розовый': (1, 0, 0.72),
+                'голубой': (0, 1, 1),
+                'коричневый': (0.48, 0.14, 0),
+                'red': (1, 0, 0),
+                'blue': (0, 0, 1),
+                'green': (0, 1, 0),
+                'yellow': (1, 1, 0),
+                'purple': (0.73, 0, 1),
+                'orange': (1, 0.53, 0),
+                'pink': (1, 0, 0.72),
+                'cyan': (0, 1, 1),
+                'brown': (0.48, 0.14, 0)
+            }
+            return color_map.get(color, (1, 1, 1, 1))  # Default color to white
+
     def play_again(self, instance):
         self.clear_widgets()
         self.__init__()
@@ -123,31 +229,16 @@ class MemoryGame(BoxLayout):
     def exit_game(self, instance):
         App.get_running_app().stop()
 
-    def get_color_rgb(self, color):
-        color_map = {
-            'красный': (1, 0, 0),
-            'синий': (0, 0, 1),
-            'зеленый': (0, 1, 0),
-            'желтый': (1, 1, 0),
-            'фиолетовый': (0.73, 0, 1),
-            'оранжевый': (1, 0.53, 0),
-            'розовый': (1, 0, 0.72),
-            'голубой': (0, 1, 1),
-            'коричневый': (0.48, 0.14, 0)
-        }
-        return color_map.get(color, (1, 1, 1, 1))  # Default color to white
-    def coise_difficult(self, difficult):
-        self.clear_widgets()
-        self.add_widget(self.easy)
-        self.add_widget(self.mid)
-        self.add_widget(self.hard)
+
 class ColoredButton(Button):
     def __init__(self, **kwargs):
         super(ColoredButton, self).__init__(**kwargs)
 
+
 class MemoryGameApp(App):
     def build(self):
         return MemoryGame()
+
 
 if __name__ == '__main__':
     MemoryGameApp().run()
