@@ -1,4 +1,4 @@
-
+import os
 import pandas as pd
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -8,7 +8,9 @@ from kivy.clock import Clock
 import random
 
 english_colors = ['red', 'blue', 'green', 'yellow', 'purple', 'orange', 'pink', 'cyan', 'brown']
-russian_colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой', 'коричневый']
+russian_colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой',
+                  'коричневый']
+
 
 class LanguageButton(Button):
     def __init__(self, language, **kwargs):
@@ -16,11 +18,13 @@ class LanguageButton(Button):
         self.language = language
         self.text = language
 
+
 class MemoryGame(BoxLayout):
     def __init__(self, **kwargs):
         super(MemoryGame, self).__init__(**kwargs)
         self.orientation = "vertical"
-        self.colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой', 'коричневый']
+        self.colors = ['красный', 'синий', 'зеленый', 'желтый', 'фиолетовый', 'оранжевый', 'розовый', 'голубой',
+                       'коричневый']
         self.correct_sequence = []
         self.user_sequence = []
         self.language = 'English'
@@ -30,7 +34,7 @@ class MemoryGame(BoxLayout):
         results_df = pd.DataFrame({
             'Result': [result]
         })
-        results_df.to_csv('results.csv', mode='a', header=not pd.path.exists('results.csv'), index=False)
+        results_df.to_csv('results.csv', mode='a', header=not os.path.exists('results.csv'), index=False)
 
     def init_ui(self):
         self.clear_widgets()
@@ -137,7 +141,8 @@ class MemoryGame(BoxLayout):
         self.clear_widgets()
         self.create_sequence()  # Создание случайной последовательности цветов
         self.display_sequence()  # Отображение последовательности
-        Clock.schedule_once(self.show_color_menu, len(self.correct_sequence) * 1.5)  # Show color menu after sequence display duration
+        Clock.schedule_once(self.show_color_menu,
+                            len(self.correct_sequence) * 1.5)  # Show color menu after sequence display duration
 
     def create_easy_sequence(self):
         for _ in range(4):  # Создание последовательности из 4 цветов для легкой сложности
@@ -153,6 +158,7 @@ class MemoryGame(BoxLayout):
         for _ in range(8):  # Создание последовательности из 8 цветов для сложной сложности
             color = random.choice(self.colors)
             self.correct_sequence.append(color)
+
     def display_sequence(self):
         for color in self.correct_sequence:
             button = ColoredButton(text=color, background_color=self.get_color_rgb(color))
@@ -168,6 +174,7 @@ class MemoryGame(BoxLayout):
         menu_layout.add_widget(self.exit_button)
         self.add_widget(menu_layout)
         self.save_results(result)  # Вызов функции для сохранения результата
+
     def show_color_menu(self, dt):
         # Удалить все дочерние виджеты текущего меню
         self.clear_widgets()
@@ -186,8 +193,10 @@ class MemoryGame(BoxLayout):
     def check_sequence(self):
         if self.user_sequence == self.correct_sequence:
             self.display_result("Правильно!")
+            self.save_results("Правильно!")  # Сохранение результата
         else:
             self.display_result("Неправильно!")
+            self.save_results("Неправильно!")  # Сохранение результата
 
     def display_result(self, result):
         self.remove_widget(self.new_sequence_label)
@@ -200,27 +209,27 @@ class MemoryGame(BoxLayout):
         self.add_widget(menu_layout)
 
     def get_color_rgb(self, color):
-            color_map = {
-                'красный': (1, 0, 0),
-                'синий': (0, 0, 1),
-                'зеленый': (0, 1, 0),
-                'желтый': (1, 1, 0),
-                'фиолетовый': (0.73, 0, 1),
-                'оранжевый': (1, 0.53, 0),
-                'розовый': (1, 0, 0.72),
-                'голубой': (0, 1, 1),
-                'коричневый': (0.48, 0.14, 0),
-                'red': (1, 0, 0),
-                'blue': (0, 0, 1),
-                'green': (0, 1, 0),
-                'yellow': (1, 1, 0),
-                'purple': (0.73, 0, 1),
-                'orange': (1, 0.53, 0),
-                'pink': (1, 0, 0.72),
-                'cyan': (0, 1, 1),
-                'brown': (0.48, 0.14, 0)
-            }
-            return color_map.get(color, (1, 1, 1, 1))  # Default color to white
+        color_map = {
+            'красный': (1, 0, 0),
+            'синий': (0, 0, 1),
+            'зеленый': (0, 1, 0),
+            'желтый': (1, 1, 0),
+            'фиолетовый': (0.73, 0, 1),
+            'оранжевый': (1, 0.53, 0),
+            'розовый': (1, 0, 0.72),
+            'голубой': (0, 1, 1),
+            'коричневый': (0.48, 0.14, 0),
+            'red': (1, 0, 0),
+            'blue': (0, 0, 1),
+            'green': (0, 1, 0),
+            'yellow': (1, 1, 0),
+            'purple': (0.73, 0, 1),
+            'orange': (1, 0.53, 0),
+            'pink': (1, 0, 0.72),
+            'cyan': (0, 1, 1),
+            'brown': (0.48, 0.14, 0)
+        }
+        return color_map.get(color, (1, 1, 1, 1))  # Default color to white
 
     def play_again(self, instance):
         self.clear_widgets()
@@ -233,7 +242,6 @@ class MemoryGame(BoxLayout):
 class ColoredButton(Button):
     def __init__(self, **kwargs):
         super(ColoredButton, self).__init__(**kwargs)
-
 
 class MemoryGameApp(App):
     def build(self):
